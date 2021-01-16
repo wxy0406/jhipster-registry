@@ -41,7 +41,7 @@ public class ExceptionTranslatorTest {
             .setControllerAdvice(new ExceptionTranslator())
             .build();
         MvcResult res = jwtMock.perform(post("/api/authenticate")
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.ALL)
             .content("{\"username\":\"fakeUsernameTooLongfakeUsernameTooLongfakeUsernameTooLongfakeUsernameTooLong" +
                 "\",\"password\":\"fakePassword\",\"rememberMe\":false}"))
@@ -49,21 +49,6 @@ public class ExceptionTranslatorTest {
             .andReturn();
 
         assertThat(res.getResolvedException()).isInstanceOf(MethodArgumentNotValidException.class);
-    }
-
-
-    @Test
-    public void processParameterizedValidationErrorTest() throws Exception {
-        // These lines will throw the wanted exception
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenThrow(new CustomParameterizedException(null));
-        SecurityContextHolder.setContext(securityContext);
-
-        MvcResult res = mock.perform(get("/api/account"))
-            .andExpect(status().isBadRequest())
-            .andReturn();
-
-        assertThat(res.getResolvedException()).isInstanceOf(CustomParameterizedException.class);
     }
 
     @Test
